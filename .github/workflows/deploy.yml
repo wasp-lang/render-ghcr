@@ -14,7 +14,7 @@ env:
   CLIENT_APP_NAME: "render-ghcr-client"
   DOCKER_REGISTRY: "ghcr.io"
   # If you are in an organisation, use ${{ github.org }} instead of ${{ github.actor }}
-  DOCKER_REGISTRY_USERNAME: ${{ github.org }}
+  DOCKER_REGISTRY_USERNAME: ${{ github.repository_owner }}
   DOCKER_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -38,13 +38,13 @@ jobs:
 
       - name: (server) Extract metadata for Docker
         id: meta-server
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REGISTRY_USERNAME }}/${{ env.SERVER_APP_NAME }}
 
       - name: (client) Extract metadata for Docker
         id: meta-client
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REGISTRY_USERNAME }}/${{ env.CLIENT_APP_NAME }}
 
