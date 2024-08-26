@@ -1,10 +1,20 @@
 name: "Deploy"
 
+on:
+  push:
+    branches:
+      - "main"
+
 env:
   WASP_TELEMETRY_DISABLED: 1
 
 jobs:
   build-and-push-images:
+
+    permissions:
+      contents: read
+      packages: write
+
     runs-on: ubuntu-latest
 
     permissions:
