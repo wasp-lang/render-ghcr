@@ -7,12 +7,14 @@ on:
 
 env:
   WASP_TELEMETRY_DISABLED: 1
+  WASP_VERSION: "0.14.0"
   SERVER_APP_NAME: "render-ghcr-server"
   # After you know the server URL, you can replace the placeholder with the actual URL
   SERVER_APP_URL: "http://localhost:3000"
   CLIENT_APP_NAME: "render-ghcr-client"
   DOCKER_REGISTRY: "ghcr.io"
-  DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
+  # If you are in an organisation, use ${{ github.org }} instead of ${{ github.actor }}
+  DOCKER_REGISTRY_USERNAME: ${{ github.org }}
   DOCKER_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -48,7 +50,7 @@ jobs:
 
       - name: Install Wasp
         shell: bash
-        run: curl -sSL https://get.wasp-lang.dev/installer.sh | sh
+        run: curl -sSL https://get.wasp-lang.dev/installer.sh | sh -s -- -v ${{ env.WASP_VERSION }}
 
       - name: Build Wasp app
         shell: bash
