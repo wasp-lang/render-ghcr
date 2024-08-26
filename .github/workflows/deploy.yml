@@ -5,6 +5,10 @@ on:
     branches:
       - "main"
 
+concurrency:
+      group: deployment
+      cancel-in-progress: true
+
 env:
   WASP_TELEMETRY_DISABLED: 1
   WASP_VERSION: "0.14.0"
