@@ -92,8 +92,8 @@ jobs:
       # You can get the webhook URL from the Render dashboard
       - name: Trigger Deploy Webhooks
         env:
-          CLIENT_URL: ${{ secrets.RENDER_CLIENT_WEBHOOK }}
-          SERVER_URL: ${{ secrets.RENDER_SERVER_WEBHOOK }}
+          CLIENT_URL: ${{ secrets.RENDER_CLIENT_WEBHOOK_URL }}
+          SERVER_URL: ${{ secrets.RENDER_SERVER_WEBHOOK_URL }}
         run: |
           curl "${{ env.CLIENT_URL }}"
           curl "${{ env.SERVER_URL }}"
