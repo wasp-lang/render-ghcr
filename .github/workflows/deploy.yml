@@ -88,3 +88,9 @@ jobs:
           push: true
           tags: ${{ steps.meta-client.outputs.tags }}
           labels: ${{ steps.meta-client.outputs.labels }}
+
+      # You can get the webhook URL from the Render dashboard
+      - name: Trigger Deploy Webhooks
+        run: |
+          curl ${{ secrets.RENDER_CLIENT_WEBHOOK }}
+          curl ${{ secrets.RENDER_SERVER_WEBHOOK }}
