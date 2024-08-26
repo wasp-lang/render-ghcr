@@ -15,6 +15,7 @@ env:
   DOCKER_REGISTRY: "ghcr.io"
   # If you are in an organisation, use ${{ github.org }} instead of ${{ github.actor }}
   DOCKER_REGISTRY_USERNAME: ${{ github.repository_owner }}
+  # This secret is provided by GitHub by default and is used to authenticate with the Container registry
   DOCKER_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
