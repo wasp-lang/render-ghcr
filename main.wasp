@@ -2,7 +2,7 @@ app renderGhcr {
   wasp: {
     version: "^0.14.0"
   },
-  title: "render-ghcr",
+  title: "Using Render.com is fun",
 
   auth: {
     userEntity: User,

@@ -14,6 +14,19 @@ Live app: https://render-ghcr-client-main.onrender.com
 
 ## Deploying to Render.com
 
+[![Deploy](https://github.com/wasp-lang/render-ghcr/actions/workflows/deploy.yml/badge.svg)](https://github.com/wasp-lang/render-ghcr/actions/workflows/deploy.yml)
+
 This app is deployed using Render.com and Github Container Repository. 
 
 It builds the app and Docker images for the server and the client in the Github action. The images are then pushed to the Github Container Registry. 
+
+Check the action source code here: https://github.com/wasp-lang/render-ghcr/blob/main/.github/workflows/deploy.yml 
+
+You'll need to create 2 web services (one for the server and one for the client) on Render.com and a PostgreSQL database.
+
+You'll need to set the following environment variables for the server:
+- `DATABASE_URL` - the connection string to your PostgreSQL database
+- `PORT` - the port on which the server will run (default is 3001)
+- `JWT_SECRET` - secret for JWT token
+- `WASP_SERVER_URL` - the URL of the server
+- `WASP_WEB_CLIENT_URL` - the URL of the client
