@@ -5,22 +5,24 @@ on:
     branches:
       - "main"
 
+# This will make sure that only one deployment is running at a time
 concurrency:
       group: deployment
       cancel-in-progress: true
 
 env:
-  WASP_TELEMETRY_DISABLED: 1
   WASP_VERSION: "0.14.0"
+  # Put your server app name here
   SERVER_APP_NAME: "render-ghcr-server"
   # After you know the server URL, put the URL here
   SERVER_APP_URL: "https://render-ghcr-server-main.onrender.com"
+  # Put your client app name here
   CLIENT_APP_NAME: "render-ghcr-client"
   DOCKER_REGISTRY: "ghcr.io"
-  # If you are in an organisation, use ${{ github.org }} instead of ${{ github.actor }}
   DOCKER_REGISTRY_USERNAME: ${{ github.repository_owner }}
   # This secret is provided by GitHub by default and is used to authenticate with the Container registry
   DOCKER_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+  WASP_TELEMETRY_DISABLED: 1
 
 jobs:
   build-and-push-images:
@@ -94,6 +96,7 @@ jobs:
           labels: ${{ steps.meta-client.outputs.labels }}
 
       # You can get the webhook URL from the Render dashboard
+      # Put them in the repository secrets under RENDER_CLIENT_WEBHOOK_URL and RENDER_SERVER_WEBHOOK_URL
       - name: Trigger Deploy Webhooks
         env:
           CLIENT_URL: ${{ secrets.RENDER_CLIENT_WEBHOOK_URL }}
