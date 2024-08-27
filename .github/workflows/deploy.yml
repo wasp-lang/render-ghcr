@@ -3,12 +3,12 @@ name: "Deploy"
 on:
   push:
     branches:
-      - "main"
+      - cloudflare-client
 
 # This will make sure that only one deployment is running at a time
 concurrency:
-      group: deployment
-      cancel-in-progress: true
+  group: deployment
+  cancel-in-progress: true
 
 env:
   WASP_VERSION: "0.14.0"
@@ -16,12 +16,12 @@ env:
   SERVER_APP_NAME: "render-ghcr-server"
   # After you know the server URL, put the URL here
   SERVER_APP_URL: "https://render-ghcr-server-main.onrender.com"
-  # Put your client app name here
-  CLIENT_APP_NAME: "render-ghcr-client"
   DOCKER_REGISTRY: "ghcr.io"
   DOCKER_REGISTRY_USERNAME: ${{ github.repository_owner }}
   # This secret is provided by GitHub by default and is used to authenticate with the Container registry
   DOCKER_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+  # Put your client Cloudflare app name here
+  CLIENT_CLOUDFLARE_APP_NAME: "render-ghcr-client"
   WASP_TELEMETRY_DISABLED: 1
 
 jobs:
@@ -49,12 +49,6 @@ jobs:
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REGISTRY_USERNAME }}/${{ env.SERVER_APP_NAME }}
 
-      - name: (client) Extract metadata for Docker
-        id: meta-client
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REGISTRY_USERNAME }}/${{ env.CLIENT_APP_NAME }}
-
       - name: Install Wasp
         shell: bash
         run: curl -sSL https://get.wasp-lang.dev/installer.sh | sh -s -- -v ${{ env.WASP_VERSION }}
@@ -69,14 +63,6 @@ jobs:
           cd ./.wasp/build/web-app
           REACT_APP_API_URL=${{ env.SERVER_APP_URL }} npm run build
 
-      - name: (client) Prepare the Dockerfile
-        shell: bash
-        run: |
-          cd ./.wasp/build/web-app
-          echo "FROM pierrezemb/gostatic" > Dockerfile
-          echo "CMD [\"-fallback\", \"index.html\", \"-enable-logging\"]" >> Dockerfile
-          echo "COPY ./build /srv/http" >> Dockerfile
-
       - name: (server) Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -86,21 +72,19 @@ jobs:
           tags: ${{ steps.meta-server.outputs.tags }}
           labels: ${{ steps.meta-server.outputs.labels }}
 
-      - name: (client) Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: ./.wasp/build/web-app
-          file: ./.wasp/build/web-app/Dockerfile
-          push: true
-          tags: ${{ steps.meta-client.outputs.tags }}
-          labels: ${{ steps.meta-client.outputs.labels }}
-
       # You can get the webhook URL from the Render dashboard
-      # Put them in the repository secrets under RENDER_CLIENT_WEBHOOK_URL and RENDER_SERVER_WEBHOOK_URL
-      - name: Trigger Deploy Webhooks
+      # Put them in the repository secrets under RENDER_SERVER_WEBHOOK_URL
+      - name: (server) Trigger Deploy Webhooks
         env:
-          CLIENT_URL: ${{ secrets.RENDER_CLIENT_WEBHOOK_URL }}
           SERVER_URL: ${{ secrets.RENDER_SERVER_WEBHOOK_URL }}
         run: |
-          curl "${{ env.CLIENT_URL }}"
           curl "${{ env.SERVER_URL }}"
+
+      - name: (client) Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          # Make sure to add CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets
+          # You can get the API token from the Cloudflare dashboard
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy ./.wasp/build/web-app/build --project-name=${{ env.CLIENT_CLOUDFLARE_APP_NAME }}
