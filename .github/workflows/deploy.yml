@@ -20,7 +20,8 @@ env:
   DOCKER_REGISTRY_USERNAME: ${{ github.repository_owner }}
   # This secret is provided by GitHub by default and is used to authenticate with the Container registry
   DOCKER_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-  # Put your client Cloudflare app name here
+  # Put your client Cloudflare app name here - make sure to create the app in Cloudflare Pages
+  # npx wrangler pages project create render-ghcr-client
   CLIENT_CLOUDFLARE_APP_NAME: "render-ghcr-client"
   WASP_TELEMETRY_DISABLED: 1
 
@@ -87,4 +88,4 @@ jobs:
           # You can get the API token from the Cloudflare dashboard
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy ./.wasp/build/web-app/build --project-name=${{ env.CLIENT_CLOUDFLARE_APP_NAME }}
+          command: pages deploy ./.wasp/build/web-app/build --project-name=${{ env.CLIENT_CLOUDFLARE_APP_NAME }} --commit-dirty=true --branch=main
