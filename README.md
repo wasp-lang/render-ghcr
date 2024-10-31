@@ -1,7 +1,5 @@
 # A Simple ToDo App w/ Typescript & Fullstack Type Saftey ⛑
 
-Live app: https://render-ghcr-client-main.onrender.com
-
 ## Running it locally
 
 1. Make sure you have the latest version of [Wasp](https://wasp-lang.dev) installed by running `curl -sSL https://get.wasp-lang.dev/installer.sh | sh` in your terminal.
